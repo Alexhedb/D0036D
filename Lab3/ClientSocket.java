@@ -20,12 +20,13 @@ public class ClientSocket {
         //create udp socket connection
         DatagramSocket socket = new DatagramSocket();
 
-        //creat buffers to process data
+        //create buffers to process data
         byte[] inData = new byte[1024];
         byte[] outData = new byte[1024];
 
         //get ip destination wanted
-        InetAddress IP = InetAddress.getByName("localhost");
+        InetAddress IP = InetAddress.getByName("127.0.0.1");
+
 
         //read data from user
         System.out.println("Enter the move and Data to send to server: ");
@@ -37,7 +38,7 @@ public class ClientSocket {
          */
 
         //send pkts
-        DatagramPacket sendPkt = new DatagramPacket(outData, outData.length, IP, 9876);
+        DatagramPacket sendPkt = new DatagramPacket(outData, outData.length, IP, 5300);
         socket.send(sendPkt);
 
         //receive pkts

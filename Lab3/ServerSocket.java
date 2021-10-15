@@ -10,7 +10,7 @@ public class ServerSocket {
 
 
     public static void main(String[] args) throws IOException{
-       socket=new DatagramSocket(9876);
+       socket=new DatagramSocket(5300);
        j.createboard();
         while(true){
             repeat();
@@ -24,8 +24,8 @@ public class ServerSocket {
         //receive pkt
         DatagramPacket rcvPkt = new DatagramPacket(inServer,inServer.length);
         socket.receive(rcvPkt);
+        System.out.println(rcvPkt);
         //display receive
-        System.out.println("Packet Received!");
 
 
         //retrive pkt info to send response to same sender
@@ -35,12 +35,16 @@ public class ServerSocket {
         //process data
         String temp = new String(rcvPkt.getData());
         temp = temp.toUpperCase();
+        System.out.println(temp);
+        for(int i=0;i<temp.length()-1;i++){
+            System.out.println(temp.charAt(i));
+        }
 
 
 
         int check=temp.length()-1;
         String move=new String();
-        String colour=new String();
+        int colour=0;
         String x=new String();
         String y=new String();
         int start=0;
@@ -55,7 +59,7 @@ public class ServerSocket {
                 move=move+c;
                 start++;
             }else if(next==1){
-                colour=colour+c;
+                colour=Character.getNumericValue(c);
                 start++;
             }else if(next==2){
                 x=x+c;
@@ -68,14 +72,19 @@ public class ServerSocket {
             }
         }
         if(move.equals("PAINT") && Integer.parseInt(x)<ColoredJPanels.rows && Integer.parseInt(y)<ColoredJPanels.cols){
-            j.PAINT(colour, x, y);
-            j.updatePAINT(colour);
-            temp="color: "+colour+" \npainted at: x="+x+" y="+y;
-        }else if(move.equals("REMOVE") && Integer.parseInt(x)<ColoredJPanels.rows && Integer.parseInt(y)<ColoredJPanels.cols){
-            j.ERASE(x,y);
-            temp="Tile erased\n"+ "at: x="+x+" y="+y;
-        }else if(move.equals("CHECK")){
-            j.recarr();
+            if (colour==0 || colour==9){
+                temp="Enter a valid colour (1-8)";
+            }
+            else {
+                if(!j.check(colour,Integer.parseInt(x),Integer.parseInt(y))) {
+                    temp = "Tile is already taken by another player!";
+                }
+                if(j.check(colour,Integer.parseInt(x),Integer.parseInt(y))){
+                    j.PAINT(colour,Integer.parseInt(x),Integer.parseInt(y));
+                    j.updatePAINT(colour);
+                    temp = "color: " + colour + " \npainted at: x=" + x + " y=" + y;
+                }
+            }
         }else{
             temp="PLEASE FOLLOW THE PROTOCOL (COMMAND;COLOUR/TILE;X-CORD;Y-CORD;)".toUpperCase();
         }
